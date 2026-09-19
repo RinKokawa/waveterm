@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import Logo from "@/app/asset/logo.svg";
-import { OnboardingGradientBg } from "@/app/onboarding/onboarding-common";
 import { atoms } from "@/app/store/global";
 import { modalsModel } from "@/app/store/modalmodel";
 import { RpcApi } from "@/app/store/wshclientapi";
@@ -15,16 +14,18 @@ import { Modal } from "./modal";
 
 interface AboutModalVProps {
     versionString: string;
-    updaterChannel: string;
+    // FORK: auto-update disabled — see FORK.md
+    // updaterChannel: string;
     onClose: () => void;
 }
 
-const AboutModalV = ({ versionString, updaterChannel, onClose }: AboutModalVProps) => {
+const AboutModalV = ({ versionString, onClose }: AboutModalVProps) => {
     const currentDate = new Date();
 
     return (
         <Modal className="pt-[34px] pb-[34px] overflow-hidden w-[450px]" onClose={onClose}>
-            <OnboardingGradientBg />
+            {/* FORK: inlined OnboardingGradientBg — onboarding-common.tsx deleted, see FORK.md */}
+            <div className="absolute inset-0 bg-gradient-to-br from-accent/[0.25] via-transparent to-accent/[0.05] pointer-events-none rounded-[10px]" />
             <div className="flex flex-col gap-[26px] w-full relative z-10">
                 <div className="flex flex-col items-center justify-center gap-4 self-stretch w-full text-center">
                     <Logo />
@@ -37,8 +38,6 @@ const AboutModalV = ({ versionString, updaterChannel, onClose }: AboutModalVProp
                 </div>
                 <div className="items-center gap-4 self-stretch w-full text-center">
                     Client Version {versionString}
-                    <br />
-                    Update Channel: {updaterChannel}
                 </div>
                 <div className="grid grid-cols-2 gap-[10px] self-stretch w-full">
                     <a
@@ -87,7 +86,8 @@ AboutModalV.displayName = "AboutModalV";
 const AboutModal = () => {
     const fullConfig = useAtomValue(atoms.fullConfigAtom);
     const versionString = `${fullConfig?.version ?? ""} (${isDev() ? "dev-" : ""}${fullConfig?.buildtime ?? ""})`;
-    const updaterChannel = fullConfig?.settings?.["autoupdate:channel"] ?? "latest";
+    // FORK: auto-update disabled — see FORK.md
+    // const updaterChannel = fullConfig?.settings?.["autoupdate:channel"] ?? "latest";
 
     useEffect(() => {
         fireAndForget(async () => {
@@ -102,7 +102,6 @@ const AboutModal = () => {
     return (
         <AboutModalV
             versionString={versionString}
-            updaterChannel={updaterChannel}
             onClose={() => modalsModel.popModal()}
         />
     );

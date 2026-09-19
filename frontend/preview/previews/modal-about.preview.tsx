@@ -7,7 +7,8 @@ export function AboutModalPreview() {
     return (
         <AboutModalV
             versionString="0.11.0 (1740000000)"
-            updaterChannel="stable"
+            // FORK: auto-update disabled — see FORK.md
+            // updaterChannel="stable"
             onClose={() => console.log("close")}
         />
     );

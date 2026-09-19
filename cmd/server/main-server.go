@@ -34,7 +34,8 @@ import (
 	"github.com/wavetermdev/waveterm/pkg/util/utilfn"
 	"github.com/wavetermdev/waveterm/pkg/wavebase"
 	"github.com/wavetermdev/waveterm/pkg/waveobj"
-	"github.com/wavetermdev/waveterm/pkg/wcloud"
+	// FORK: telemetry disabled — see FORK.md (wcloud import kept as blank for easy revert)
+	_ "github.com/wavetermdev/waveterm/pkg/wcloud"
 	"github.com/wavetermdev/waveterm/pkg/wconfig"
 	"github.com/wavetermdev/waveterm/pkg/wcore"
 	"github.com/wavetermdev/waveterm/pkg/web"
@@ -155,8 +156,9 @@ func diagnosticLoop() {
 }
 
 func sendDiagnosticPing() bool {
-	ctx, cancelFn := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancelFn()
+	// FORK: telemetry disabled — see FORK.md
+	// ctx, cancelFn := context.WithTimeout(context.Background(), 5*time.Second)
+	// defer cancelFn()
 
 	rpcClient := wshclient.GetBareRpcClient()
 	isOnline, err := wshclient.NetworkOnlineCommand(rpcClient, &wshrpc.RpcOpts{Route: "electron", Timeout: 2000})
@@ -164,8 +166,10 @@ func sendDiagnosticPing() bool {
 		return false
 	}
 	clientId := wstore.GetClientId()
-	usageTelemetry := telemetry.IsTelemetryEnabled()
-	wcloud.SendDiagnosticPing(ctx, clientId, usageTelemetry)
+	_ = clientId
+	// FORK: telemetry disabled — see FORK.md
+	// usageTelemetry := telemetry.IsTelemetryEnabled()
+	// wcloud.SendDiagnosticPing(ctx, clientId, usageTelemetry)
 	return true
 }
 
@@ -222,10 +226,12 @@ func sendTelemetryWrapper() {
 	defer cancelFn()
 	beforeSendActivityUpdate(ctx)
 	clientId := wstore.GetClientId()
-	err := wcloud.SendAllTelemetry(clientId)
-	if err != nil {
-		log.Printf("[error] sending telemetry: %v\n", err)
-	}
+	_ = clientId
+	// FORK: telemetry disabled — see FORK.md
+	// err := wcloud.SendAllTelemetry(clientId)
+	// if err != nil {
+	// 	log.Printf("[error] sending telemetry: %v\n", err)
+	// }
 }
 
 func updateTelemetryCounts(lastCounts telemetrydata.TEventProps) telemetrydata.TEventProps {
@@ -313,8 +319,9 @@ func startupActivityUpdate(firstLaunch bool) {
 	if err != nil {
 		log.Printf("error updating startup activity: %v\n", err)
 	}
-	autoUpdateChannel := telemetry.AutoUpdateChannel()
-	autoUpdateEnabled := telemetry.IsAutoUpdateEnabled()
+	// FORK: auto-update disabled — see FORK.md
+	// autoUpdateChannel := telemetry.AutoUpdateChannel()
+	// autoUpdateEnabled := telemetry.IsAutoUpdateEnabled()
 	shellType, shellVersion, shellErr := shellutil.DetectShellTypeAndVersion()
 	if shellErr != nil {
 		shellType = "error"
@@ -345,8 +352,9 @@ func startupActivityUpdate(firstLaunch bool) {
 			ClientIsDev:         wavebase.IsDevMode(),
 			ClientPackageType:   wavebase.ClientPackageType(),
 			ClientMacOSVersion:  wavebase.ClientMacOSVersion(),
-			AutoUpdateChannel:   autoUpdateChannel,
-			AutoUpdateEnabled:   autoUpdateEnabled,
+			// FORK: auto-update disabled — see FORK.md
+			// AutoUpdateChannel:   autoUpdateChannel,
+			// AutoUpdateEnabled:   autoUpdateEnabled,
 			LocalShellType:      shellType,
 			LocalShellVersion:   shellVersion,
 			SettingsTransparent: fullConfig.Settings.WindowTransparent,
@@ -405,10 +413,11 @@ func grabAndRemoveEnvVars() error {
 	if err != nil {
 		return err
 	}
-	err = wcloud.CacheAndRemoveEnvVars()
-	if err != nil {
-		return err
-	}
+	// FORK: telemetry disabled — see FORK.md
+	// err = wcloud.CacheAndRemoveEnvVars()
+	// if err != nil {
+	// 	return err
+	// }
 
 	// Remove WAVETERM env vars that leak from prod => dev
 	os.Unsetenv("WAVETERM_CLIENTID")

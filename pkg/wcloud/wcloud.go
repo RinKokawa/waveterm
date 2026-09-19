@@ -234,8 +234,9 @@ func sendTelemetry(clientId string) error {
 		ClientId:          clientId,
 		UserId:            clientId,
 		AppType:           "w2",
-		AutoUpdateEnabled: telemetry.IsAutoUpdateEnabled(),
-		AutoUpdateChannel: telemetry.AutoUpdateChannel(),
+		// FORK: auto-update disabled — see FORK.md
+		// AutoUpdateEnabled: telemetry.IsAutoUpdateEnabled(),
+		// AutoUpdateChannel: telemetry.AutoUpdateChannel(),
 		CurDay:            dayStr,
 		Activity:          activity,
 	}

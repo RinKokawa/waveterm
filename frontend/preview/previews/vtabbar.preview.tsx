@@ -36,7 +36,8 @@ function VTabBarPreviewInner({ platform, setPlatform }: VTabBarPreviewInnerProps
     const [hideAiButton, setHideAiButton] = useState(false);
     const [isFullScreen, setIsFullScreen] = useAtom(env.atoms.isFullScreen);
     const [fullConfig, setFullConfig] = useAtom(env.atoms.fullConfigAtom);
-    const [updaterStatus, setUpdaterStatus] = useAtom(env.atoms.updaterStatusAtom);
+    // FORK: auto-update disabled — see FORK.md
+    // const [updaterStatus, setUpdaterStatus] = useAtom(env.atoms.updaterStatusAtom);
     const [width, setWidth] = useState<number>(220);
     const workspace = useAtomValue(env.wos.getWaveObjectAtom<Workspace>(`workspace:${TabBarMockWorkspaceId}`));
 
@@ -69,7 +70,8 @@ function VTabBarPreviewInner({ platform, setPlatform }: VTabBarPreviewInnerProps
                         <option value={PlatformLinux}>Linux</option>
                     </select>
                 </label>
-                <label className="flex flex-col gap-2 text-xs text-muted">
+                {/* FORK: auto-update disabled — see FORK.md */}
+                {/* <label className="flex flex-col gap-2 text-xs text-muted">
                     <span>Updater banner</span>
                     <select
                         value={updaterStatus}
@@ -82,7 +84,7 @@ function VTabBarPreviewInner({ platform, setPlatform }: VTabBarPreviewInnerProps
                         <option value="installing">Installing</option>
                         <option value="error">Error</option>
                     </select>
-                </label>
+                </label> */}
                 <label className="flex flex-col gap-2 text-xs text-muted">
                     <span>Width: {width}px</span>
                     <input

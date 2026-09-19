@@ -56,7 +56,8 @@ import {
 } from "./emain-window";
 import { ElectronWshClient, initElectronWshClient } from "./emain-wsh";
 import { getLaunchSettings } from "./launchsettings";
-import { configureAutoUpdater, updater } from "./updater";
+// FORK: auto-update disabled — see FORK.md
+// import { configureAutoUpdater, updater } from "./updater";
 
 const electronApp = electron.app;
 
@@ -291,7 +292,8 @@ electronApp.on("before-quit", (e) => {
         return;
     }
     setGlobalIsQuitting(true);
-    updater?.stop();
+    // FORK: auto-update disabled — see FORK.md
+    // updater?.stop();
     if (unamePlatform == "win32") {
         // win32 doesn't have a SIGINT, so we just let electron die, which
         // ends up killing wavesrv via closing it's stdin.
@@ -421,7 +423,8 @@ async function appMain() {
 
     makeAndSetAppMenu();
     makeDockTaskbar();
-    await configureAutoUpdater();
+    // FORK: auto-update disabled — see FORK.md
+    // await configureAutoUpdater();
     setGlobalIsStarting(false);
     if (fullConfig?.settings?.["window:maxtabcachesize"] != null) {
         setMaxTabCacheSize(fullConfig.settings["window:maxtabcachesize"]);

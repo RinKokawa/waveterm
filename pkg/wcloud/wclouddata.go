@@ -16,8 +16,9 @@ type TelemetryInputType struct {
 	UserId            string                    `json:"userid"`
 	ClientId          string                    `json:"clientid"`
 	AppType           string                    `json:"apptype,omitempty"`
-	AutoUpdateEnabled bool                      `json:"autoupdateenabled,omitempty"`
-	AutoUpdateChannel string                    `json:"autoupdatechannel,omitempty"`
+	// FORK: auto-update disabled — see FORK.md
+	// AutoUpdateEnabled bool                      `json:"autoupdateenabled,omitempty"`
+	// AutoUpdateChannel string                    `json:"autoupdatechannel,omitempty"`
 	CurDay            string                    `json:"curday"`
 	Activity          []*telemetry.ActivityType `json:"activity"`
 }

@@ -182,7 +182,8 @@ function makeMockGlobalAtoms(
         controlShiftDelayAtom: atom(false) as any,
         prefersReducedMotionAtom: atom(false),
         documentHasFocus: atom(true) as any,
-        updaterStatusAtom: atom("up-to-date" as UpdaterStatus) as any,
+        // FORK: auto-update disabled — see FORK.md
+        // updaterStatusAtom: atom("up-to-date" as UpdaterStatus) as any,
         modalOpen: atom(false) as any,
         allConnStatus: atom([] as ConnStatus[]),
         reinitVersion: atom(0) as any,

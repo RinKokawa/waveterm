@@ -6,12 +6,11 @@ import { globalStore } from "./jotaiStore";
 
 class ModalsModel {
     modalsAtom: jotai.PrimitiveAtom<Array<{ displayName: string; props?: any }>>;
-    newInstallOnboardingOpen: jotai.PrimitiveAtom<boolean>;
-    upgradeOnboardingOpen: jotai.PrimitiveAtom<boolean>;
 
     constructor() {
-        this.newInstallOnboardingOpen = jotai.atom(false);
-        this.upgradeOnboardingOpen = jotai.atom(false);
+        // FORK: onboarding modals removed — see FORK.md
+        // this.newInstallOnboardingOpen = jotai.atom(false);
+        // this.upgradeOnboardingOpen = jotai.atom(false);
         this.modalsAtom = jotai.atom([]);
     }
 

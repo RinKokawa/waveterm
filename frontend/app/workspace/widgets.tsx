@@ -6,6 +6,7 @@ import { TabRpcClient } from "@/app/store/wshrpcutil";
 import { useWaveEnv, WaveEnv, WaveEnvSubset } from "@/app/waveenv/waveenv";
 import { shouldIncludeWidgetForWorkspace } from "@/app/workspace/widgetfilter";
 import { modalsModel } from "@/store/modalmodel";
+import { useT } from "@/i18n/locale";
 import { fireAndForget, isBlank, makeIconClass } from "@/util/util";
 import {
     autoUpdate,
@@ -109,15 +110,16 @@ function calculateGridSize(appCount: number): number {
 }
 
 function SettingsTooltipContent({ hasConfigErrors }: { hasConfigErrors: boolean }) {
+    const t = useT();
     if (!hasConfigErrors) {
-        return "Settings & Help";
+        return t("settings.floating.title");
     }
     return (
         <div className="flex flex-col p-1">
-            <div className="mb-1">Settings &amp; Help</div>
+            <div className="mb-1">{t("settings.floating.title")}</div>
             <div className="flex items-center gap-1 mt-0.5 text-error">
                 <i className="fa fa-solid fa-circle-exclamation"></i>
-                <span>Config Errors</span>
+                <span>{t("settings.floating.configErrors")}</span>
             </div>
         </div>
     );
@@ -256,6 +258,7 @@ const AppsFloatingWindow = memo(({ isOpen, onClose, referenceElement }: Floating
 const SettingsFloatingWindow = memo(
     ({ isOpen, onClose, referenceElement, hasConfigErrors }: FloatingWindowPropsType) => {
         const env = useWaveEnv<WidgetsEnv>();
+        const t = useT();
         const { refs, floatingStyles, context } = useFloating({
             open: isOpen,
             onOpenChange: onClose,
@@ -275,7 +278,7 @@ const SettingsFloatingWindow = memo(
         const menuItems = [
             {
                 icon: "gear",
-                label: "Settings",
+                label: t("settings.floating.settings"),
                 hasError: hasConfigErrors,
                 onClick: () => {
                     const blockDef: BlockDef = {
@@ -289,7 +292,7 @@ const SettingsFloatingWindow = memo(
             },
             {
                 icon: "lightbulb",
-                label: "Tips",
+                label: t("settings.floating.tips"),
                 onClick: () => {
                     const blockDef: BlockDef = {
                         meta: {
@@ -302,7 +305,7 @@ const SettingsFloatingWindow = memo(
             },
             {
                 icon: "lock",
-                label: "Secrets",
+                label: t("settings.floating.secrets"),
                 onClick: () => {
                     const blockDef: BlockDef = {
                         meta: {
@@ -314,17 +317,10 @@ const SettingsFloatingWindow = memo(
                     onClose();
                 },
             },
-            {
-                icon: "book-open",
-                label: "Release Notes",
-                onClick: () => {
-                    modalsModel.pushModal("UpgradeOnboardingPatch", { isReleaseNotes: true });
-                    onClose();
-                },
-            },
+            // FORK: Release Notes menu item removed — see FORK.md (UpgradeOnboardingPatch modal deleted)
             {
                 icon: "circle-question",
-                label: "Help",
+                label: t("settings.floating.help"),
                 onClick: () => {
                     const blockDef: BlockDef = {
                         meta: {

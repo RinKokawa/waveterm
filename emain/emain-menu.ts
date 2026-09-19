@@ -20,7 +20,8 @@ import {
     WaveBrowserWindow,
 } from "./emain-window";
 import { ElectronWshClient } from "./emain-wsh";
-import { updater } from "./updater";
+// FORK: auto-update disabled — see FORK.md
+// import { updater } from "./updater";
 
 type AppMenuCallbacks = {
     createNewWaveWindow: () => Promise<void>;
@@ -179,12 +180,13 @@ function makeAppMenuItems(webContents: electron.WebContents): Electron.MenuItemC
                 (getWindowWebContents(window) ?? webContents)?.send("menu-item-about");
             },
         },
-        {
-            label: "Check for Updates",
-            click: () => {
-                fireAndForget(() => updater?.checkForUpdates(true));
-            },
-        },
+        // FORK: auto-update disabled — see FORK.md
+        // {
+        //     label: "Check for Updates",
+        //     click: () => {
+        //         fireAndForget(() => updater?.checkForUpdates(true));
+        //     },
+        // },
         { type: "separator" },
     ];
     if (unamePlatform === "darwin") {

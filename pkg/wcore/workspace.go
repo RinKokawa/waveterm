@@ -248,7 +248,8 @@ func CreateTab(ctx context.Context, workspaceId string, tabName string, activate
 		}
 	}
 
-	// No need to apply an initial layout for the initial launch, since the starter layout will get applied after onboarding modal dismissal
+	// No need to apply an initial layout for the initial launch — the starter layout will get applied when the first tab is created
+	// FORK: onboarding modal removed — see FORK.md
 	if !isInitialLaunch {
 		err = ApplyPortableLayout(ctx, tab.OID, GetNewTabLayout(), true)
 		if err != nil {

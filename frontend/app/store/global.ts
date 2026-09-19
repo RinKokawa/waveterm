@@ -666,11 +666,13 @@ function setActiveTab(tabId: string) {
 }
 
 function recordTEvent(event: string, props?: TEventProps) {
-    if (isPreviewWindow()) return;
-    if (props == null) {
-        props = {};
-    }
-    RpcApi.RecordTEventCommand(TabRpcClient, { event, props }, { noresponse: true });
+    // FORK: telemetry disabled — see FORK.md
+    // Original body kept for reference:
+    //     if (isPreviewWindow()) return;
+    //     if (props == null) props = {};
+    //     RpcApi.RecordTEventCommand(TabRpcClient, { event, props }, { noresponse: true });
+    void event;
+    void props;
 }
 
 export {

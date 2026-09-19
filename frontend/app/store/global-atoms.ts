@@ -78,15 +78,16 @@ function initGlobalAtoms(initOpts: GlobalInitOptions) {
     // this is *the* tab that this tabview represents.  it should never change.
     const staticTabIdAtom: Atom<string> = atom(initOpts.tabId);
     const controlShiftDelayAtom = atom(false);
-    const updaterStatusAtom = atom<UpdaterStatus>("up-to-date") as PrimitiveAtom<UpdaterStatus>;
-    try {
-        globalStore.set(updaterStatusAtom, getApi().getUpdaterStatus());
-        getApi().onUpdaterStatusChange((status) => {
-            globalStore.set(updaterStatusAtom, status);
-        });
-    } catch (e) {
-        console.log("failed to initialize updaterStatusAtom", e);
-    }
+    // FORK: auto-update disabled — see FORK.md
+    // const updaterStatusAtom = atom<UpdaterStatus>("up-to-date") as PrimitiveAtom<UpdaterStatus>;
+    // try {
+    //     globalStore.set(updaterStatusAtom, getApi().getUpdaterStatus());
+    //     getApi().onUpdaterStatusChange((status) => {
+    //         globalStore.set(updaterStatusAtom, status);
+    //     });
+    // } catch (e) {
+    //     console.log("failed to initialize updaterStatusAtom", e);
+    // }
 
     const reducedMotionSettingAtom = atom((get) => get(settingsAtom)?.["window:reducedmotion"]);
     const reducedMotionSystemPreferenceAtom = atom(false);
@@ -142,7 +143,8 @@ function initGlobalAtoms(initOpts: GlobalInitOptions) {
         isFullScreen: isFullScreenAtom,
         zoomFactorAtom,
         controlShiftDelayAtom,
-        updaterStatusAtom,
+        // FORK: auto-update disabled — see FORK.md
+        // updaterStatusAtom,
         prefersReducedMotionAtom,
         documentHasFocus: documentHasFocusAtom,
         modalOpen,

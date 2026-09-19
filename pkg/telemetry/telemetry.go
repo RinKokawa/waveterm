@@ -100,15 +100,16 @@ func IsTelemetryEnabled() bool {
 	return settings.Settings.TelemetryEnabled
 }
 
-func IsAutoUpdateEnabled() bool {
-	settings := wconfig.GetWatcher().GetFullConfig()
-	return settings.Settings.AutoUpdateEnabled
-}
-
-func AutoUpdateChannel() string {
-	settings := wconfig.GetWatcher().GetFullConfig()
-	return settings.Settings.AutoUpdateChannel
-}
+// FORK: auto-update disabled — see FORK.md
+// func IsAutoUpdateEnabled() bool {
+// 	settings := wconfig.GetWatcher().GetFullConfig()
+// 	return settings.Settings.AutoUpdateEnabled
+// }
+//
+// func AutoUpdateChannel() string {
+// 	settings := wconfig.GetWatcher().GetFullConfig()
+// 	return settings.Settings.AutoUpdateChannel
+// }
 
 // Wraps UpdateCurrentActivity, spawns goroutine, and logs errors
 func GoUpdateActivityWrap(update wshrpc.ActivityUpdate, debugStr string) {

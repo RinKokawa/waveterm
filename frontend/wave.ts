@@ -19,6 +19,7 @@ import { initWshrpc, TabRpcClient } from "@/app/store/wshrpcutil";
 import { BuilderApp } from "@/builder/builder-app";
 import { getLayoutModelForStaticTab } from "@/layout/index";
 import { countersClear, countersPrint } from "@/store/counters";
+import { initLocale } from "@/i18n/locale";
 import {
     atoms,
     getApi,
@@ -61,6 +62,7 @@ async function initBare() {
     document.body.style.visibility = "hidden";
     document.body.style.opacity = "0";
     document.body.classList.add("is-transparent");
+    initLocale();
     getApi().onWaveInit(initWaveWrap);
     getApi().onBuilderInit(initBuilderWrap);
     setKeyUtilPlatform(platform);
@@ -116,7 +118,8 @@ async function reinitWave() {
     document.title = `Wave Terminal - ${initialTab.name}`; // TODO update with tab name change
     getApi().setWindowInitStatus("wave-ready");
     globalStore.set(atoms.reinitVersion, globalStore.get(atoms.reinitVersion) + 1);
-    globalStore.set(atoms.updaterStatusAtom, getApi().getUpdaterStatus());
+    // FORK: auto-update disabled — see FORK.md
+    // globalStore.set(atoms.updaterStatusAtom, getApi().getUpdaterStatus());
     setTimeout(() => {
         globalRefocus();
     }, 50);
