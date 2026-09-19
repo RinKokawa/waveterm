@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Button } from "@/app/element/button";
+import { t } from "@/i18n/locale";
 import { cn } from "@/util/util";
 import clsx from "clsx";
 import { forwardRef } from "react";
@@ -92,8 +93,8 @@ interface ModalFooterProps {
 const ModalFooter = ({
     onCancel,
     onOk,
-    cancelLabel = "Cancel",
-    okLabel = "Ok",
+    cancelLabel = t("common.cancel"),
+    okLabel = t("common.ok"),
     okDisabled,
     cancelDisabled,
 }: ModalFooterProps) => {

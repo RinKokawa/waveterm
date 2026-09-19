@@ -23,7 +23,8 @@
             "@/view/*": ["frontend/app/view/*"],
             "@/element/*": ["frontend/app/element/*"],
             "@/shadcn/*": ["frontend/app/shadcn/*"],
-            "@/preview/*": ["frontend/preview/*"]
+            "@/preview/*": ["frontend/preview/*"],
+            "@/i18n/*": ["frontend/i18n/*"]
         },
         "lib": ["dom", "dom.iterable", "es6"],
         "allowJs": true,

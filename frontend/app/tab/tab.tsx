@@ -5,6 +5,7 @@ import { getTabBadgeAtom } from "@/app/store/badge";
 import { refocusNode } from "@/app/store/global";
 import { getTabModelByTabId } from "@/app/store/tab-model";
 import { TabRpcClient } from "@/app/store/wshrpcutil";
+import { t } from "@/i18n/locale";
 import { WaveEnv, WaveEnvSubset, useWaveEnv } from "@/app/waveenv/waveenv";
 import { Button } from "@/element/button";
 import { validateCssColor } from "@/util/color-validator";
@@ -209,7 +210,7 @@ const TabV = forwardRef<HTMLDivElement, TabVProps>((props, ref) => {
                     className="ghost grey close"
                     onClick={onClose}
                     onMouseDown={handleMouseDownOnClose}
-                    title="Close Tab"
+                    title={t("tab.tooltip.closeTab")}
                 >
                     <i className="fa fa-solid fa-xmark" />
                 </Button>

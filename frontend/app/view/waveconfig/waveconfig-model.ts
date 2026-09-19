@@ -9,6 +9,7 @@ import { TabRpcClient } from "@/app/store/wshrpcutil";
 import { SecretsContent } from "@/app/view/waveconfig/secretscontent";
 import { WaveConfigView } from "@/app/view/waveconfig/waveconfig";
 import type { WaveConfigEnv } from "@/app/view/waveconfig/waveconfigenv";
+import { t } from "@/i18n/locale";
 import { base64ToString, stringToBase64 } from "@/util/util";
 import { atom, type Atom, type PrimitiveAtom } from "jotai";
 import type * as MonacoTypes from "monaco-editor";
@@ -58,46 +59,46 @@ function validateWaveAiJson(parsed: any): ValidationResult {
 function makeConfigFiles(isWindows: boolean): ConfigFile[] {
     return [
         {
-            name: "General",
+            name: t("settings.file.general"),
             path: "settings.json",
             language: "json",
             docsUrl: "https://docs.waveterm.dev/config",
             hasJsonView: true,
         },
         {
-            name: "Connections",
+            name: t("settings.file.connections"),
             path: "connections.json",
             language: "json",
             docsUrl: "https://docs.waveterm.dev/connections",
-            description: isWindows ? "SSH hosts and WSL distros" : "SSH hosts",
+            description: isWindows ? t("settings.file.connectionsDesc.win") : t("settings.file.connectionsDesc"),
             hasJsonView: true,
         },
         {
-            name: "Sidebar Widgets",
+            name: t("settings.file.widgets"),
             path: "widgets.json",
             language: "json",
             docsUrl: "https://docs.waveterm.dev/customwidgets",
             hasJsonView: true,
         },
         {
-            name: "Wave AI Modes",
+            name: t("settings.file.waveai"),
             path: "waveai.json",
             language: "json",
-            description: "Local models and BYOK",
+            description: t("settings.file.waveaiDesc"),
             docsUrl: "https://docs.waveterm.dev/waveai-modes",
             validator: validateWaveAiJson,
             hasJsonView: true,
             // visualComponent: WaveAIVisualContent,
         },
         {
-            name: "Tab Backgrounds",
+            name: t("settings.file.backgrounds"),
             path: "backgrounds.json",
             language: "json",
             docsUrl: "https://docs.waveterm.dev/tab-backgrounds",
             hasJsonView: true,
         },
         {
-            name: "Secrets",
+            name: t("settings.file.secrets"),
             path: "secrets",
             isSecrets: true,
             hasJsonView: false,
@@ -108,14 +109,14 @@ function makeConfigFiles(isWindows: boolean): ConfigFile[] {
 
 const deprecatedConfigFiles: ConfigFile[] = [
     {
-        name: "Presets",
+        name: t("settings.file.presets"),
         path: "presets.json",
         language: "json",
         deprecated: true,
         hasJsonView: true,
     },
     {
-        name: "AI Presets",
+        name: t("settings.file.aiPresets"),
         path: "presets/ai.json",
         language: "json",
         deprecated: true,
@@ -267,7 +268,7 @@ export class WaveConfigViewModel implements ViewModel {
         if (!this.hasChanges()) {
             return true;
         }
-        return window.confirm("You have unsaved changes. Discard and continue?");
+        return window.confirm(t("settings.discardConfirm"));
     }
 
     discardChanges() {
