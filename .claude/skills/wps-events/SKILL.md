@@ -1,0 +1,236 @@
+---
+name: wps-events
+description: Guide for using WPS (Wave PubSub) event system in Wave Terminal. Use when adding new event types, publishing events from Go code, subscribing to events in frontend, or designing event-driven communication between components.
+---
+
+# WPS Events Guide
+
+## Overview
+
+WPS (Wave PubSub) is Wave Terminal's publish-subscribe event system that enables different parts of the application to communicate asynchronously. The system uses a broker pattern to route events from publishers to subscribers based on event types and scopes.
+
+## Key Files
+
+- `pkg/wps/wpstypes.go` - Event type constants and data structures
+- `pkg/wps/wps.go` - Broker implementation and core logic
+- `pkg/wcore/wcore.go` - Example usage patterns
+
+## Event Structure
+
+Events in WPS have the following structure:
+
+```go
+type WaveEvent struct {
+    Event   string   `json:"event"`              // Event type constant
+    Scopes  []string `json:"scopes,omitempty"`   // Optional scopes for targeted delivery
+    Sender  string   `json:"sender,omitempty"`   // Optional sender identifier
+    Persist int      `json:"persist,omitempty"`  // Number of events to persist in history
+    Data    any      `json:"data,omitempty"`     // Event payload
+}
+```
+
+## Adding a New Event Type
+
+### Step 1: Define the Event Constant
+
+Add your event type constant to `pkg/wps/wpstypes.go`:
+
+```go
+const (
+    Event_BlockClose       = "blockclose"
+    Event_ConnChange       = "connchange"
+    // ... other events ...
+    Event_YourNewEvent     = "your:newevent"  // Use colon notation for namespacing
+)
+```
+
+**Naming Convention:**
+- Use descriptive PascalCase for the constant name with `Event_` prefix
+- Use lowercase with colons for the string value (e.g., "namespace:eventname")
+- Group related events with the same namespace prefix
+
+### Step 2: Define Event Data Structure (Optional)
+
+If your event carries structured data, define a type for it:
+
+```go
+type YourEventData struct {
+    Field1 string `json:"field1"`
+    Field2 int    `json:"field2"`
+}
+```
+
+### Step 3: Expose Type to Frontend (If Needed)
+
+If your event data type isn't already exposed via an RPC call, add it to `pkg/tsgen/tsgen.go` so TypeScript types are generated:
+
+```go
+// add extra types to generate here
+var ExtraTypes = []any{
+    waveobj.ORef{},
+    // ... other types ...
+    uctypes.RateLimitInfo{},  // Example: already added
+    YourEventData{},          // Add your new type here
+}
+```
+
+Then run code generation:
+
+```bash
+task generate
+```
+
+This will update `frontend/types/gotypes.d.ts` with TypeScript definitions for your type.
+
+## Publishing Events
+
+### Basic Publishing
+
+```go
+import "github.com/wavetermdev/waveterm/pkg/wps"
+
+wps.Broker.Publish(wps.WaveEvent{
+    Event: wps.Event_YourNewEvent,
+    Data:  yourData,
+})
+```
+
+### Publishing with Scopes
+
+Scopes allow targeted event delivery. Subscribers can filter events by scope:
+
+```go
+wps.Broker.Publish(wps.WaveEvent{
+    Event:  wps.Event_WaveObjUpdate,
+    Scopes: []string{oref.String()},  // Target specific object
+    Data:   updateData,
+})
+```
+
+### Publishing in a Goroutine
+
+To avoid blocking the caller, publish events asynchronously:
+
+```go
+go func() {
+    wps.Broker.Publish(wps.WaveEvent{
+        Event: wps.Event_YourNewEvent,
+        Data:  data,
+    })
+}()
+```
+
+**When to use goroutines:**
+- When publishing from performance-critical code paths
+- When the event is informational and doesn't need immediate delivery
+- When publishing from code that holds locks (to prevent deadlocks)
+
+### Event Persistence
+
+Events can be persisted in memory for late subscribers:
+
+```go
+wps.Broker.Publish(wps.WaveEvent{
+    Event:   wps.Event_YourNewEvent,
+    Persist: 100,  // Keep last 100 events
+    Data:    data,
+})
+```
+
+## Subscribing to Events
+
+### From Go Code
+
+```go
+// Subscribe to all events of a type
+wps.Broker.Subscribe(routeId, wps.SubscriptionRequest{
+    Event:     wps.Event_YourNewEvent,
+    AllScopes: true,
+})
+
+// Subscribe to specific scopes
+wps.Broker.Subscribe(routeId, wps.SubscriptionRequest{
+    Event:  wps.Event_WaveObjUpdate,
+    Scopes: []string{"workspace:123"},
+})
+
+// Unsubscribe
+wps.Broker.Unsubscribe(routeId, wps.Event_YourNewEvent)
+```
+
+### Scope Matching
+
+Scopes support wildcard matching:
+- `*` matches a single scope segment
+- `**` matches multiple scope segments
+
+```go
+wps.Broker.Subscribe(routeId, wps.SubscriptionRequest{
+    Event:  wps.Event_WaveObjUpdate,
+    Scopes: []string{"workspace:*"},
+})
+```
+
+## Best Practices
+
+1. **Use Namespaces**: Prefix event names with a namespace (e.g., `waveai:`, `workspace:`, `block:`)
+2. **Don't Block**: Use goroutines when publishing from performance-critical code or while holding locks
+3. **Type-Safe Data**: Define struct types for event data rather than using maps
+4. **Scope Wisely**: Use scopes to limit event delivery and reduce unnecessary processing
+5. **Document Events**: Add comments explaining when events are fired and what data they carry
+6. **Consider Persistence**: Use `Persist` for events that late subscribers might need
+
+## Common Event Patterns
+
+### Status Updates
+
+```go
+wps.Broker.Publish(wps.WaveEvent{
+    Event:   wps.Event_ControllerStatus,
+    Scopes:  []string{blockId},
+    Persist: 1,  // Keep only latest status
+    Data:    statusData,
+})
+```
+
+### Object Updates
+
+```go
+wps.Broker.Publish(wps.WaveEvent{
+    Event:  wps.Event_WaveObjUpdate,
+    Scopes: []string{oref.String()},
+    Data: waveobj.WaveObjUpdate{
+        UpdateType: waveobj.UpdateType_Update,
+        OType:      obj.GetOType(),
+        OID:        waveobj.GetOID(obj),
+        Obj:        obj,
+    },
+})
+```
+
+### Batch Updates
+
+```go
+func (b *BrokerType) SendUpdateEvents(updates waveobj.UpdatesRtnType) {
+    for _, update := range updates {
+        b.Publish(WaveEvent{
+            Event:  Event_WaveObjUpdate,
+            Scopes: []string{waveobj.MakeORef(update.OType, update.OID).String()},
+            Data:   update,
+        })
+    }
+}
+```
+
+## Debugging
+
+To debug event flow:
+1. Check broker subscription map: `wps.Broker.SubMap`
+2. View persisted events: `wps.Broker.ReadEventHistory(eventType, scope, maxItems)`
+3. Add logging in publish/subscribe methods
+4. Monitor WebSocket traffic in browser dev tools
+
+## Related Documentation
+
+- `config-system` skill - Uses WPS events for config updates
+- `waveai-architecture` skill - AI-related events
