@@ -36,6 +36,6 @@
     "term:trimtrailingwhitespace": true,
     "term:durable": false,
     "waveai:showcloudmodes": true,
-    "waveai:defaultmode": "waveai@balanced",
+    "waveai:defaultmode": "minimax-m3",
     "preview:defaultsort": "name"
 }

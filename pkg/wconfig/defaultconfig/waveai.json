@@ -39,5 +39,18 @@
         "ai:capabilities": ["tools", "images", "pdfs"],
         "waveai:premium": true,
         "ai:switchcompat": ["wavecloud"]
+    },
+    "minimax-m3": {
+        "display:name": "MiniMax M3",
+        "display:order": 1,
+        "display:icon": "wand-magic-sparkles",
+        "display:description": "MiniMax M3 (anthropic-compatible)\n需要设置环境变量 MiniMax_API_KEY",
+        "ai:provider": "custom",
+        "ai:apitype": "anthropic-messages",
+        "ai:model": "MiniMax-M3",
+        "ai:endpoint": "https://api.minimaxi.com/anthropic/v1/messages",
+        "ai:apitoken": "$ENV:MiniMax_API_KEY",
+        "ai:capabilities": ["tools", "images", "pdfs"],
+        "ai:switchcompat": ["wavecloud", "anthropic"]
     }
 }
