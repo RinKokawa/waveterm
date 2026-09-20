@@ -4,6 +4,8 @@
 import { BlockNodeModel } from "@/app/block/blocktypes";
 import type { TabModel } from "@/app/store/tab-model";
 import { AiFileDiffViewModel } from "@/app/view/aifilediff/aifilediff";
+// FORK: data-monitor widget — see frontend/app/view/datamonitor/datamonitor.tsx
+import { DataMonitorViewModel } from "@/app/view/datamonitor/datamonitor";
 import { LauncherViewModel } from "@/app/view/launcher/launcher";
 import { PreviewModel } from "@/app/view/preview/preview-model";
 import { ProcessViewerViewModel } from "@/app/view/processviewer/processviewer";
@@ -35,6 +37,7 @@ BlockRegistry.set("tsunami", TsunamiViewModel);
 BlockRegistry.set("aifilediff", AiFileDiffViewModel);
 BlockRegistry.set("waveconfig", WaveConfigViewModel);
 BlockRegistry.set("processviewer", ProcessViewerViewModel);
+BlockRegistry.set("datamonitor", DataMonitorViewModel);
 
 function makeDefaultViewModel(viewType: string): ViewModel {
     const viewModel: ViewModel = {

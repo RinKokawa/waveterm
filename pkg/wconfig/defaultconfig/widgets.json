@@ -2,7 +2,7 @@
     "defwidget@terminal": {
         "display:order": -5,
         "icon": "square-terminal",
-        "label": "terminal",
+        "label": "终端",
         "blockdef": {
             "meta": {
                 "view": "term",
@@ -13,7 +13,7 @@
     "defwidget@files": {
         "display:order": -4,
         "icon": "folder",
-        "label": "files",
+        "label": "文件",
         "blockdef": {
             "meta": {
                 "view": "preview",
@@ -24,7 +24,7 @@
     "defwidget@web": {
         "display:order": -3,
         "icon": "globe",
-        "label": "web",
+        "label": "网页",
         "blockdef": {
             "meta": {
                 "view": "web"
@@ -34,7 +34,7 @@
     "defwidget@sysinfo": {
         "display:order": -2,
         "icon": "chart-line",
-        "label": "sysinfo",
+        "label": "系统",
         "blockdef": {
             "meta": {
                 "view": "sysinfo"
@@ -44,10 +44,20 @@
     "defwidget@processviewer": {
         "display:order": -1,
         "icon": "list-tree",
-        "label": "processes",
+        "label": "进程",
         "blockdef": {
             "meta": {
                 "view": "processviewer"
+            }
+        }
+    },
+    "defwidget@datamonitor": {
+        "display:order": 0,
+        "icon": "chart-mixed",
+        "label": "监控",
+        "blockdef": {
+            "meta": {
+                "view": "datamonitor"
             }
         }
     }

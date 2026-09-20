@@ -300,6 +300,12 @@ export class RpcApiType {
         return client.wshRpcCall("fetchsuggestions", data, opts);
     }
 
+    // command "fetchurl" [call]
+    FetchUrlCommand(client: WshClient, data: CommandFetchUrlData, opts?: RpcOpts): Promise<FetchUrlResponse> {
+        if (this.mockClient) return this.mockClient.mockWshRpcCall(client, "fetchurl", data, opts);
+        return client.wshRpcCall("fetchurl", data, opts);
+    }
+
     // command "fileappend" [call]
     FileAppendCommand(client: WshClient, data: FileData, opts?: RpcOpts): Promise<void> {
         if (this.mockClient) return this.mockClient.mockWshRpcCall(client, "fileappend", data, opts);

@@ -11,8 +11,10 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"io/fs"
 	"log"
+	"net/http"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -1560,4 +1562,57 @@ func (ws *WshServer) JobControllerDetachJobCommand(ctx context.Context, jobId st
 
 func (ws *WshServer) BlockJobStatusCommand(ctx context.Context, blockId string) (*wshrpc.BlockJobStatusData, error) {
 	return jobcontroller.GetBlockJobStatus(ctx, blockId)
+}
+
+// FORK: data-monitor widget — see CommandFetchUrlData in wshrpctypes.go and
+// frontend/app/view/datamonitor/. Sends a caller-defined HTTP request from Go
+// (no CORS) and returns the raw response body. Caller-provided headers let the
+// widget pass cookies/auth tokens without exposing them in the renderer.
+func (ws *WshServer) FetchUrlCommand(ctx context.Context, data wshrpc.CommandFetchUrlData) (*wshrpc.FetchUrlResponse, error) {
+	method := strings.ToUpper(strings.TrimSpace(data.Method))
+	if method == "" {
+		method = http.MethodGet
+	}
+	if method != http.MethodGet && method != http.MethodPost && method != http.MethodPut && method != http.MethodDelete && method != http.MethodPatch && method != http.MethodHead {
+		return nil, fmt.Errorf("unsupported method %q", data.Method)
+	}
+	if strings.TrimSpace(data.Url) == "" {
+		return nil, errors.New("url is required")
+	}
+	// Cap response body at 8 MiB so a misbehaving server can't blow up the renderer.
+	const maxBody = 8 * 1024 * 1024
+	client := &http.Client{Timeout: 30 * time.Second}
+	var body io.Reader
+	if data.Body != "" {
+		body = strings.NewReader(data.Body)
+	}
+	req, err := http.NewRequestWithContext(ctx, method, data.Url, body)
+	if err != nil {
+		return nil, fmt.Errorf("build request: %w", err)
+	}
+	for k, v := range data.Headers {
+		req.Header.Set(k, v)
+	}
+	// If the caller provided a body but didn't set Content-Type, set the default
+	// so servers don't 415 us. JSON is the overwhelmingly common case for this widget.
+	if data.Body != "" && req.Header.Get("Content-Type") == "" && req.Header.Get("content-type") == "" {
+		req.Header.Set("Content-Type", "application/json")
+	}
+	resp, err := client.Do(req)
+	if err != nil {
+		return &wshrpc.FetchUrlResponse{Error: err.Error()}, nil
+	}
+	defer resp.Body.Close()
+	limited := io.LimitReader(resp.Body, maxBody+1)
+	buf, _ := io.ReadAll(limited)
+	truncated := false
+	if len(buf) > maxBody {
+		buf = buf[:maxBody]
+		truncated = true
+	}
+	rtn := &wshrpc.FetchUrlResponse{StatusCode: resp.StatusCode, Body: string(buf)}
+	if truncated {
+		rtn.Error = fmt.Sprintf("response truncated at %d bytes", maxBody)
+	}
+	return rtn, nil
 }

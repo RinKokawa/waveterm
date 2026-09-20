@@ -117,11 +117,48 @@ tasks:
         desc: Package the application for the current platform.
         cmds:
             - npm run build:prod && npm exec electron-builder -- -c electron-builder.config.cjs -p never {{.CLI_ARGS}}
+        # FORK: vite renderer is heavy (monaco + ts.worker ~13MB). Give it
+        # 8GB so it doesn't OOM on machines with ~16GB total RAM.
+        env:
+            NODE_OPTIONS: "--max-old-space-size=8192"
         deps:
             - clean
             - npm:install
             - build:backend
             - build:tsunamiscaffold
+
+    # FORK: bump .rin-version counter (modifies package.json into .rin.N), run the
+    # normal package task, then restore package.json to the saved upstream
+    # version. Initial state: package.json "0.14.5" → first build = ".rin.0".
+    # See scripts/rin-bump.cjs.
+    package:rin:
+        desc: Package with .rin.N version suffix, restore package.json after.
+        cmds:
+            - node scripts/rin-bump.cjs
+            - task: package
+            - node scripts/rin-bump.cjs --restore
+        env:
+            NODE_OPTIONS: "--max-old-space-size=8192"
+        deps:
+            - clean
+            - npm:install
+            - build:backend
+            - build:tsunamiscaffold
+
+    rin:bump:
+        desc: Bump .rin-version counter and modify package.json (no build).
+        cmds:
+            - node scripts/rin-bump.cjs
+
+    rin:reset:
+        desc: Reset .rin-version counter to BASE.rin.0 (no build).
+        cmds:
+            - node scripts/rin-bump.cjs --reset
+
+    rin:restore:
+        desc: Restore package.json version to saved upstream value.
+        cmds:
+            - node scripts/rin-bump.cjs --restore
 
     build:frontend:dev:
         desc: Build the frontend in development mode.

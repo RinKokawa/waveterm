@@ -299,6 +299,12 @@ func FetchSuggestionsCommand(w *wshutil.WshRpc, data wshrpc.FetchSuggestionsData
 	return resp, err
 }
 
+// command "fetchurl", wshserver.FetchUrlCommand
+func FetchUrlCommand(w *wshutil.WshRpc, data wshrpc.CommandFetchUrlData, opts *wshrpc.RpcOpts) (*wshrpc.FetchUrlResponse, error) {
+	resp, err := sendRpcRequestCallHelper[*wshrpc.FetchUrlResponse](w, "fetchurl", data, opts)
+	return resp, err
+}
+
 // command "fileappend", wshserver.FileAppendCommand
 func FileAppendCommand(w *wshutil.WshRpc, data wshrpc.FileData, opts *wshrpc.RpcOpts) error {
 	_, err := sendRpcRequestCallHelper[any](w, "fileappend", data, opts)

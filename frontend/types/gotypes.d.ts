@@ -378,6 +378,14 @@ declare global {
         maxitems: number;
     };
 
+    // wshrpc.CommandFetchUrlData
+    type CommandFetchUrlData = {
+        url: string;
+        method?: string;
+        headers?: {[key: string]: string};
+        body?: string;
+    };
+
     // wshrpc.CommandFileCopyData
     type CommandFileCopyData = {
         srcuri: string;
@@ -924,6 +932,13 @@ declare global {
         suggestions: SuggestionType[];
     };
 
+    // wshrpc.FetchUrlResponse
+    type FetchUrlResponse = {
+        statuscode: number;
+        body: string;
+        error?: string;
+    };
+
     // wshrpc.FileCopyOpts
     type FileCopyOpts = {
         overwrite?: boolean;
@@ -1435,11 +1450,6 @@ declare global {
         "web:openlinksinternally"?: boolean;
         "web:defaulturl"?: string;
         "web:defaultsearch"?: string;
-        "autoupdate:*"?: boolean;
-        "autoupdate:enabled"?: boolean;
-        "autoupdate:intervalms"?: number;
-        "autoupdate:installonquit"?: boolean;
-        "autoupdate:channel"?: string;
         "markdown:fontsize"?: number;
         "markdown:fixedfontsize"?: number;
         "preview:showhiddenfiles"?: boolean;
@@ -1561,8 +1571,6 @@ declare global {
         "client:macos"?: string;
         "cohort:month"?: string;
         "cohort:isoweek"?: string;
-        "autoupdate:channel"?: string;
-        "autoupdate:enabled"?: boolean;
         "localshell:type"?: string;
         "localshell:version"?: string;
         "loc:countrycode"?: string;
@@ -1663,8 +1671,6 @@ declare global {
         "client:macos"?: string;
         "cohort:month"?: string;
         "cohort:isoweek"?: string;
-        "autoupdate:channel"?: string;
-        "autoupdate:enabled"?: boolean;
         "localshell:type"?: string;
         "localshell:version"?: string;
         "loc:countrycode"?: string;

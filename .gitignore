@@ -43,3 +43,5 @@ docsite/
 .kilo-format-temp-*
 .superpowers
 docs/superpowers
+.rin-version
+.rin-version-prev

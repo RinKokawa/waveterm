@@ -5,15 +5,28 @@ const path = require("path");
 
 const windowsShouldSign = !!process.env.SM_CODE_SIGNING_CERT_SHA1_HASH;
 
+// FORK: artifact name picks up the .rin.N suffix when scripts/rin-bump.cjs
+// has written it. The bump script modifies package.json's "version" field
+// before build, so electron-builder naturally reads it. After the build,
+// the bump script also restores package.json to the upstream version.
+// File format: literal "0.14.5.rin.N" — period-separated (not semver dash)
+// so artifact names look like "Wave-win32-x64-0.14.5.rin.0.exe".
+const RIN_VERSION_FILE = path.resolve(__dirname, ".rin-version");
+let displayVersion = pkg.version;
+if (fs.existsSync(RIN_VERSION_FILE)) {
+    const v = fs.readFileSync(RIN_VERSION_FILE, "utf8").trim();
+    if (v) displayVersion = v;
+}
+
 /**
- * @type {import('electron-builder').Configuration}
+ * @type {import('electron-builder").Configuration}
  * @see https://www.electron.build/configuration/configuration
  */
 const config = {
     appId: pkg.build.appId,
     productName: pkg.productName,
     executableName: pkg.productName,
-    artifactName: "${productName}-${platform}-${arch}-${version}.${ext}",
+    artifactName: "${productName}-${platform}-${arch}-" + displayVersion + ".${ext}",
     generateUpdatesFilesForAllChannels: false, // FORK: auto-update disabled — see FORK.md
     npmRebuild: false,
     nodeGypRebuild: false,

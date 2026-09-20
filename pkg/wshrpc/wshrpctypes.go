@@ -211,6 +211,10 @@ type WshRpcInterface interface {
 	JobControllerDetachJobCommand(ctx context.Context, jobId string) error
 	JobControllerGetAllJobManagerStatusCommand(ctx context.Context) ([]*JobManagerStatusUpdate, error)
 	BlockJobStatusCommand(ctx context.Context, blockId string) (*BlockJobStatusData, error)
+
+	// FORK: data-monitor widget — generic URL fetch (bypasses CORS for arbitrary
+	// third-party APIs in the DataMonitor widget, frontend/app/view/datamonitor/).
+	FetchUrlCommand(ctx context.Context, data CommandFetchUrlData) (*FetchUrlResponse, error)
 }
 
 // for frontend
@@ -924,4 +928,21 @@ type CommandRemoteProcessListData struct {
 type CommandRemoteProcessSignalData struct {
 	Pid    int32  `json:"pid"`
 	Signal string `json:"signal"`
+}
+
+// FORK: data-monitor widget — see FetchUrlCommand in WshRpcInterface above.
+// Sends an HTTP request with caller-provided headers (cookie/auth) and returns
+// the raw response. Used by frontend/app/view/datamonitor/ to fetch arbitrary
+// third-party JSON APIs without hitting browser CORS restrictions.
+type CommandFetchUrlData struct {
+	Url     string            `json:"url"`
+	Method  string            `json:"method,omitempty"`  // default "GET"
+	Headers map[string]string `json:"headers,omitempty"` // caller-provided (cookie, x-group-id, etc.)
+	Body    string            `json:"body,omitempty"`
+}
+
+type FetchUrlResponse struct {
+	StatusCode int    `json:"statuscode"`
+	Body       string `json:"body"`
+	Error      string `json:"error,omitempty"` // populated when the request itself fails (not HTTP errors)
 }
